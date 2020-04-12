@@ -24,7 +24,7 @@ def register():
     elif db.execute('SELECT * FROM user WHERE username = ?', (username,)).fetchone() != None:
       error = 'User {} is already registered.'.format(username)
 
-    if error != None:
+    if error == None:
       db.execute('INSERT INTO user (username, password) VALUES (?, ?)', (username, generate_password_hash(password)))
       db.commit()
       return redirect(url_for('auth.login'))
