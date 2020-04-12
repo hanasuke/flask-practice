@@ -46,7 +46,6 @@ def login():
       error = 'Incorrect username'
     elif not check_password_hash(user['password'], password):
       error = 'Incorrect password'
-      return redirect(url_for('index'))
 
     if error == None:
       session.clear()
@@ -65,18 +64,20 @@ def logout():
 def login_required(view):
   @functools.wraps(view)
   def wrapped_view(**kwargs):
-    if g.user == None:
+    if g.user is None:
       return redirect(url_for('auth.login'))
 
     return view(**kwargs)
 
   return wrapped_view
 
-@bp.before_app_first_request
+@bp.before_app_request
 def load_logged_in_user():
   user_id = session.get('user_id')
 
-  if user_id == None:
+  print('load user')
+  print(user_id)
+  if user_id is None:
     g.user = None
   else:
     g.user = get_db().execute('SELECT * FROM user WHERE id = ?', (user_id,)).fetchone()
